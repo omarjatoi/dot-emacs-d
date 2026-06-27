@@ -1,6 +1,10 @@
-# emacs
+# `.emacs.d`
 
-Emacs configuration.
+Minimal yet functional emacs configuration. Declared emacs bankruptcy a while ago and started with a much cleaner and smaller configuration.
+
+```
+emacs --init-directory=~/path/to/.emacs.d
+```
 
 ## License
 

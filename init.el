@@ -1,36 +1,11 @@
-;; Turn off some stuff for a cleaner looking minimal Emacs
-(setq inhibit-startup-screen t)
-(setq ring-bell-function 'ignore)
-(tool-bar-mode -1)
-(menu-bar-mode -1)
-(scroll-bar-mode -1)
-(blink-cursor-mode -1)
+;;; init.el --- Main entry point -*- lexical-binding: t; -*-
+;;; Commentary:
+;; Bootstraps straight.el + use-package, then loads the configuration modules
+;; in lisp/.  Keep this file thin: feature config lives in the modules.
+;;; Code:
 
-;; Do not want to create lockfiles
-(setq create-lockfiles nil)
-
-;; Display line numbers in every buffer
-;; (global-display-line-numbers-mode 1)
-(add-hook 'prog-mode-hook 'display-line-numbers-mode)  ; only in programming text buffers
-(global-hl-line-mode 1)
-
-;; The font to use
-(set-frame-font "JetBrains Mono 14" nil t)
-
-;; Tabs
-(setq-default tab-width 4)
-(setq-default indent-tabs-mode nil)
-
-;; When scrolling pages up and down, go to start or end instead of error
-(setq scroll-error-top-bottom t)
-
-;; Using macOS so these are helpful
-(setq mac-command-modifier 'meta)
-(setq mac-option-modifier 'super)
-
-;; Using straight.el for package management, this bootstraps and installs it
-;; see https://github.com/radian-software/straight.el
-(setq package-enable-at-startup nil)
+;; --- Bootstrap straight.el -------------------------------------------------
+;; See https://github.com/radian-software/straight.el
 (defvar bootstrap-version)
 (let ((bootstrap-file
        (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
@@ -43,34 +18,18 @@
       (goto-char (point-max))
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
+
 (straight-use-package 'use-package)
+;; Every `use-package' form installs via straight unless told otherwise, so we
+;; can drop the per-package `:straight t'.
+(setq straight-use-package-by-default t)
 
-;; Load the Modus Operandi theme
-;; See https://github.com/protesilaos/modus-themes
-(straight-use-package 'modus-themes)  ; no longer needed in Emacs >= 28
-(straight-use-package 'stimmung-themes)
-(load-theme 'stimmung-themes-light t)
+;; --- Load configuration modules --------------------------------------------
+(add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
 
-;; TODO: come back and configure packages like vertico, marginalia, corfu, consult, prescient
-(use-package vertico
-  :straight t
-  :init
-  (vertico-mode)
-  (setq vertico-count 15)
-  (setq vertico-resize t))
+(require 'ui)
+(require 'macos)
+(require 'editing)
+(require 'completion)
 
-(use-package savehist
-  :straight t
-  :init
-  (savehist-mode))
-
-;; Enable rich annotations using the Marginalia package
-(use-package marginalia
-  :straight t
-  ;; Bind `marginalia-cycle' locally in the minibuffer.  To make the binding
-  ;; available in the *Completions* buffer, add it to the
-  ;; `completion-list-mode-map'.
-  :bind (:map minibuffer-local-map
-         ("M-A" . marginalia-cycle))
-  :init
-  (marginalia-mode))
+;;; init.el ends here

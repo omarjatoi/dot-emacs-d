@@ -9,3 +9,14 @@
 
 # Undo-tree save-files
 *.~undo-tree
+
+# straight.el package store and native-comp cache
+/straight/
+/eln-cache/
+
+# Generated/persisted state
+/custom.el
+/backups/
+/auto-saves/
+/savehist
+/var/
